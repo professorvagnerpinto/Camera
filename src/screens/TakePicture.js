@@ -14,9 +14,11 @@ export default class TakePicture extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            uriImage:''
+            uriImage:'',
+            camera:RNCamera.Constants.Type.back
         }
         this.takePicture = this.takePicture.bind(this);
+        this.switchCamera = this.switchCamera.bind(this);
     }
 
     takePicture = async () => {
@@ -30,6 +32,16 @@ export default class TakePicture extends React.Component {
         }
     };
 
+    switchCamera(){
+        let s = this.state;
+        if(this.state.camera === RNCamera.Constants.Type.back){
+            s.camera = RNCamera.Constants.Type.front;
+        }else{
+            s.camera = RNCamera.Constants.Type.back;
+        }
+        this.setState(s);
+    }
+
     render() {
         console.log('Uri= ' + this.state.uriImage);
         return (
@@ -39,7 +51,7 @@ export default class TakePicture extends React.Component {
                         this.camera = ref;
                     }}
                     style={styles.preview}
-                    type={RNCamera.Constants.Type.back}
+                    type={this.state.camera}
                     flashMode={RNCamera.Constants.FlashMode.on}
                     androidCameraPermissionOptions={{
                         title: 'Permission to use camera',
@@ -58,13 +70,18 @@ export default class TakePicture extends React.Component {
                         alert(barcodes[0].data);
                     }}
                 />
+                <View style={styles.snapshotDiv}>
+                    {this.state.uriImage !== '' && <TouchableOpacity style={styles.buttonImageView} onPress={()=>this.setState({uriImage:''})}>
+                        <Image resizeMode="contain" style={styles.image} source={{uri:this.state.uriImage}} />
+                    </TouchableOpacity>}
+                </View>
                 <View style={styles.footerDiv}>
+                    <TouchableOpacity onPress={this.switchCamera} >
+                        <Image style={styles.buttonSwitch} source={require('../images/ic_camera_switch.png')} />
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={this.takePicture} style={styles.buttonCapture}>
                         <Text style={styles.textSnap}> SNAP </Text>
                     </TouchableOpacity>
-                    {this.state.uriImage !== '' && <TouchableOpacity style={styles.viewDiv} onPress={()=>this.setState({uriImage:''})}>
-                        <Image resizeMode="contain" style={styles.image} source={{uri:this.state.uriImage}} />
-                    </TouchableOpacity>}
                 </View>
             </View>
         );
@@ -80,33 +97,24 @@ const styles = StyleSheet.create({
     preview: {
         flex: 1
     },
+    snapshotDiv:{
+        width:'100%',
+        height:200,
+        justifyContent:'flex-end',
+        alignItems:'flex-end',
+        alignSelf: 'flex-end',
+        position:'absolute',
+    },
     footerDiv:{
-        flex: 0,
         width: '100%',
-        justifyContent: 'space-between',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems:'center',
         alignSelf: 'flex-end',
         position:'absolute'
     },
-    buttonCapture:{
-        backgroundColor: '#a50000',
-        borderRadius: 5,
-        padding: 15,
-        paddingHorizontal: 20,
-        alignSelf: 'center',
-        margin: 20,
-    },
-    textSnap:{
-        fontSize:14,
-        color:'#ffffff',
-        fontWeight:'bold'
-    },
-    viewDiv:{
-        flex:0,
-        marginRight:5,
-        marginBottom:5,
-        justifyContent: 'center',
-        alignSelf: 'flex-end',
-        position:'absolute'
+    buttonImageView:{
+        flex:1,
     },
     image:{
         width:100,
@@ -114,4 +122,24 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderColor:'#ffffff'
     },
+    buttonSwitch:{
+        width:50,
+        height: 50,
+        marginLeft:10
+    },
+    buttonCapture:{
+        width:70,
+        height: 70,
+        justifyContent:'center',
+        alignItems: 'center',
+        backgroundColor: '#a50000',
+        borderRadius: 40,
+        alignSelf: 'center',
+        margin: 20,
+    },
+    textSnap:{
+        fontSize:14,
+        color:'#ffffff',
+        fontWeight:'bold'
+    }
 });

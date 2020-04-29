@@ -11,9 +11,9 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import Barcode from './screens/Barcode';
-import TakePicture from './screens/TakePicture';
-import Home from './screens/Home';
+import Barcode from './src/screens/Barcode';
+import TakePicture from './src/screens/TakePicture';
+import Home from './src/screens/Home';
 
 const Stack = createStackNavigator();
 function App() {
