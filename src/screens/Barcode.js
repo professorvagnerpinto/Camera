@@ -1,5 +1,5 @@
 /**
- * Vídeo #1 ao #27: Câmera - Módulo 18 - Localização, Câmera, React Navite avançado - B7Web
+ * Vídeo #1 ao #9: Câmera - Módulo 18 - Localização, Câmera, React Navite avançado - B7Web
  * Adiquirindo conhecimento em features avançadas: Lendo código de barras.
  * Para instalar o react-native-camera, siga as instruções em: https://blog.jscrambler.com/how-to-use-react-native-camera/
  * Ou acesse a documentação do pacote, em: https://react-native-community.github.io/react-native-camera/docs/installation#mostly-automatic-install-with-autolinking-rn-060
@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import {StyleSheet, View, Alert} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 
 export default class Barcode extends React.Component {
@@ -15,37 +15,24 @@ export default class Barcode extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            barcodes: [],
+            code:'',
+            type:''
         };
 
         this.barcodeRecognized = this.barcodeRecognized.bind(this);
-        this.renderBarcodes = this.renderBarcodes.bind(this);
-        this.renderBarcode = this.renderBarcode.bind(this);
     }
 
     barcodeRecognized = ({barcodes}) => {
-        barcodes.forEach(barcode => console.log(barcode.data));
-        this.setState({barcodes});
+        if(this.camera){
+            console.log(barcodes);
+            console.log(barcodes[0].data);
+            console.log(barcodes[0].type);
+            let s = this.state;
+            s.code = barcodes[0].data
+            s.type = barcodes[0].type;
+            this.setState(s);
+        }
     };
-
-    renderBarcodes = () => (
-        <View>{this.state.barcodes.map(this.renderBarcode)}</View>
-    )
-
-    renderBarcode = ({ data }) =>
-        Alert.alert(
-            'Scanned Data',
-            data,
-            [
-                {
-                    text: 'Okay',
-                    onPress: () => console.log('Okay Pressed'),
-                    style: 'cancel'
-                }
-            ],
-            { cancelable: false }
-        )
-
 
     render() {
         return (
@@ -54,7 +41,7 @@ export default class Barcode extends React.Component {
                     ref={ref => {
                         this.camera = ref
                     }}
-                    style={styles.scanner}
+                    style={styles.preview}
                     type={RNCamera.Constants.Type.back}
                     autoFocus={RNCamera.Constants.AutoFocus.on}
                     androidCameraPermissionOptions={{
@@ -63,9 +50,12 @@ export default class Barcode extends React.Component {
                         buttonPositive: 'Ok',
                         buttonNegative: 'Cancelar',
                     }}
-                    onGoogleVisionBarcodesDetected={this.barcodeRecognized}>
-                    {this.renderBarcodes}
+                    onGoogleVisionBarcodesDetected={this.barcodeRecognized} >
                 </RNCamera>
+                {this.state.code !== '' && <View style={styles.textDiv} >
+                    <Text style={styles.text} onPress={()=>this.setState({code:'', type:''})} >{this.state.code} </Text>
+                    <Text style={styles.text} onPress={()=>this.setState({code:'', type:''})} >{this.state.type}</Text>
+                </View>}
             </View>
         );
     }
@@ -74,12 +64,31 @@ export default class Barcode extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexDirection: 'row',
+        backgroundColor: '#000000'
+    },
+    preview: {
+        flex: 1
+    },
+    textDiv:{
+        width: '100%',
+        height:80,
         flexDirection: 'column',
-        backgroundColor: 'black',
+        justifyContent: 'center',
+        alignItems:'center',
+        position:'absolute',
+        alignSelf:'center'
     },
-    scanner: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
+    text:{
+        width: '50%',
+        height: 80,
+        fontSize:14,
+        fontWeight:'bold',
+        color:'#ffffff',
+        textAlign:'center',
+        textAlignVertical:'center',
+        borderWidth:1,
+        borderColor:'red',
+        marginBottom:10
+    }
 });

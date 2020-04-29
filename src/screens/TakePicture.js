@@ -1,5 +1,5 @@
 /**
- * Vídeo #1 ao #27: Câmera - Módulo 18 - Localização, Câmera, React Navite avançado - B7Web
+ * Vídeo #1 ao #9: Câmera - Módulo 18 - Localização, Câmera, React Navite avançado - B7Web
  * Adiquirindo conhecimento em features avançadas: Tirando uma foto.
  * Para instalar o react-native-camera, siga as instruções em: https://blog.jscrambler.com/how-to-use-react-native-camera/
  * Ou acesse a documentação do pacote, em: https://react-native-community.github.io/react-native-camera/docs/installation#mostly-automatic-install-with-autolinking-rn-060
