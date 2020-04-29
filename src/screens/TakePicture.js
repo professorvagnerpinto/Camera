@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, Image, Modal } from 'react-native';
+import Slider from '@react-native-community/slider';
 import { RNCamera } from 'react-native-camera';
 
 export default class TakePicture extends React.Component {
@@ -18,11 +19,13 @@ export default class TakePicture extends React.Component {
             camera:RNCamera.Constants.Type.back,
             flash:RNCamera.Constants.FlashMode.auto,
             flashImage:require('../images/ic_flash_auto.png'),
-            modalVisible:false
+            modalVisible:false,
+            zoom:0
         }
         this.takePicture = this.takePicture.bind(this);
         this.switchCamera = this.switchCamera.bind(this);
         this.switchFlash = this.switchFlash.bind(this);
+        this.changeZoom = this.changeZoom.bind(this);
     }
 
     takePicture = async () => {
@@ -78,6 +81,12 @@ export default class TakePicture extends React.Component {
         this.setState(s);
     }
 
+    changeZoom(value){
+        let s = this.state;
+        s.zoom = value;
+        this.setState(s);
+    }
+
     render() {
         console.log('Uri= ' + this.state.uriImage);
         return (
@@ -90,6 +99,7 @@ export default class TakePicture extends React.Component {
                     type={this.state.camera}
                     flashMode={this.state.flash}
                     autoFocus={RNCamera.Constants.AutoFocus.on}
+                    zoom={this.state.zoom}
                     androidCameraPermissionOptions={{
                         title: 'Permission to use camera',
                         message: 'We need your permission to use your camera',
@@ -111,6 +121,9 @@ export default class TakePicture extends React.Component {
                     {this.state.uriImage !== '' && <TouchableOpacity style={styles.buttonImageView} onPress={()=>this.setModalVisible(true)}>
                         <Image resizeMode="contain" style={styles.image} source={{uri:this.state.uriImage}} />
                     </TouchableOpacity>}
+                </View>
+                <View style={styles.sliderDiv} >
+                    <Slider style={styles.sliderZoom} value={this.state.zoom} minimumValue={0} maximumValue={1} onValueChange={(v)=>this.changeZoom(v)}/>
                 </View>
                 <View style={styles.footerDiv}>
                     <TouchableOpacity onPress={this.switchFlash} >
@@ -187,5 +200,15 @@ const styles = StyleSheet.create({
         width:'95%',
         height:'95%',
         margin:10
+    },
+    sliderDiv:{
+        flexDirection:'row',
+        width:'100%',
+        height:170,
+        alignSelf: 'flex-end',
+        position:'absolute'
+    },
+    sliderZoom:{
+        width:'100%'
     }
 });

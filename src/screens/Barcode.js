@@ -56,6 +56,7 @@ export default class Barcode extends React.Component {
                     }}
                     style={styles.scanner}
                     type={RNCamera.Constants.Type.back}
+                    autoFocus={RNCamera.Constants.AutoFocus.on}
                     androidCameraPermissionOptions={{
                         title: 'Permissão para o uso da Câmera',
                         message: 'Nós precisamos de sua permissão para utilizar a sua câmera',
