@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 
 export default class TakePicture extends React.Component {
@@ -15,10 +15,13 @@ export default class TakePicture extends React.Component {
         super(props);
         this.state = {
             uriImage:'',
-            camera:RNCamera.Constants.Type.back
+            camera:RNCamera.Constants.Type.back,
+            flash:RNCamera.Constants.FlashMode.auto,
+            flashImage:require('../images/ic_flash_auto.png')
         }
         this.takePicture = this.takePicture.bind(this);
         this.switchCamera = this.switchCamera.bind(this);
+        this.switchFlash = this.switchFlash.bind(this);
     }
 
     takePicture = async () => {
@@ -33,13 +36,36 @@ export default class TakePicture extends React.Component {
     };
 
     switchCamera(){
-        let s = this.state;
-        if(this.state.camera === RNCamera.Constants.Type.back){
-            s.camera = RNCamera.Constants.Type.front;
-        }else{
-            s.camera = RNCamera.Constants.Type.back;
+        if(this.camera){
+            let s = this.state;
+            if(this.state.camera === RNCamera.Constants.Type.back){
+                s.camera = RNCamera.Constants.Type.front;
+            }else{
+                s.camera = RNCamera.Constants.Type.back;
+            }
+            this.setState(s);
         }
-        this.setState(s);
+    }
+
+    switchFlash(){
+        if(this.camera){
+            let s = this.state;
+            switch (s.flash) {
+                case RNCamera.Constants.FlashMode.auto:
+                    s.flash = RNCamera.Constants.FlashMode.off;
+                    s.flashImage = require('../images/ic_flash_off.png');
+                    break;
+                case RNCamera.Constants.FlashMode.off:
+                    s.flash = RNCamera.Constants.FlashMode.on;
+                    s.flashImage = require('../images/ic_flash_on.png');
+                    break;
+                case RNCamera.Constants.FlashMode.on:
+                    s.flash = RNCamera.Constants.FlashMode.auto;
+                    s.flashImage = require('../images/ic_flash_auto.png');
+                    break;
+            }
+            this.setState(s);
+        }
     }
 
     render() {
@@ -52,7 +78,7 @@ export default class TakePicture extends React.Component {
                     }}
                     style={styles.preview}
                     type={this.state.camera}
-                    flashMode={RNCamera.Constants.FlashMode.on}
+                    flashMode={this.state.flash}
                     androidCameraPermissionOptions={{
                         title: 'Permission to use camera',
                         message: 'We need your permission to use your camera',
@@ -76,11 +102,14 @@ export default class TakePicture extends React.Component {
                     </TouchableOpacity>}
                 </View>
                 <View style={styles.footerDiv}>
-                    <TouchableOpacity onPress={this.switchCamera} >
-                        <Image style={styles.buttonSwitch} source={require('../images/ic_camera_switch.png')} />
+                    <TouchableOpacity onPress={this.switchFlash} >
+                        <Image style={styles.button} source={this.state.flashImage} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={this.takePicture} style={styles.buttonCapture}>
-                        <Text style={styles.textSnap}> SNAP </Text>
+                    <TouchableOpacity onPress={this.takePicture} style={styles.buttonSnap}>
+                        <Image style={styles.buttonSnap} source={require('../images/ic_camera_snap.png')} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.switchCamera} >
+                        <Image style={styles.button} source={require('../images/ic_camera_switch.png')} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -122,24 +151,12 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderColor:'#ffffff'
     },
-    buttonSwitch:{
+    button:{
         width:50,
-        height: 50,
-        marginLeft:10
+        height: 50
     },
-    buttonCapture:{
+    buttonSnap:{
         width:70,
-        height: 70,
-        justifyContent:'center',
-        alignItems: 'center',
-        backgroundColor: '#a50000',
-        borderRadius: 40,
-        alignSelf: 'center',
-        margin: 20,
-    },
-    textSnap:{
-        fontSize:14,
-        color:'#ffffff',
-        fontWeight:'bold'
+        height: 70
     }
 });
