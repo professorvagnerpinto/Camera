@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image, Modal } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 
 export default class TakePicture extends React.Component {
@@ -17,7 +17,8 @@ export default class TakePicture extends React.Component {
             uriImage:'',
             camera:RNCamera.Constants.Type.back,
             flash:RNCamera.Constants.FlashMode.auto,
-            flashImage:require('../images/ic_flash_auto.png')
+            flashImage:require('../images/ic_flash_auto.png'),
+            modalVisible:false
         }
         this.takePicture = this.takePicture.bind(this);
         this.switchCamera = this.switchCamera.bind(this);
@@ -68,6 +69,15 @@ export default class TakePicture extends React.Component {
         }
     }
 
+    setModalVisible(status){
+        let s = this.state;
+        s.modalVisible = status;
+        if(!status){
+            s.uriImage = '';
+        }
+        this.setState(s);
+    }
+
     render() {
         console.log('Uri= ' + this.state.uriImage);
         return (
@@ -79,6 +89,7 @@ export default class TakePicture extends React.Component {
                     style={styles.preview}
                     type={this.state.camera}
                     flashMode={this.state.flash}
+                    autoFocus={RNCamera.Constants.AutoFocus.on}
                     androidCameraPermissionOptions={{
                         title: 'Permission to use camera',
                         message: 'We need your permission to use your camera',
@@ -97,7 +108,7 @@ export default class TakePicture extends React.Component {
                     }}
                 />
                 <View style={styles.snapshotDiv}>
-                    {this.state.uriImage !== '' && <TouchableOpacity style={styles.buttonImageView} onPress={()=>this.setState({uriImage:''})}>
+                    {this.state.uriImage !== '' && <TouchableOpacity style={styles.buttonImageView} onPress={()=>this.setModalVisible(true)}>
                         <Image resizeMode="contain" style={styles.image} source={{uri:this.state.uriImage}} />
                     </TouchableOpacity>}
                 </View>
@@ -112,6 +123,13 @@ export default class TakePicture extends React.Component {
                         <Image style={styles.button} source={require('../images/ic_camera_switch.png')} />
                     </TouchableOpacity>
                 </View>
+                <Modal animationType="slide" transparent={false} visible={this.state.modalVisible} >
+                    <View styles={styles.modalContainer}>
+                        <TouchableOpacity onPress={()=>this.setModalVisible(false)} >
+                            <Image resizeMode="center" style={styles.modalImage} source={{uri:this.state.uriImage}} />
+                        </TouchableOpacity>
+                    </View>
+                </Modal>
             </View>
         );
     }
@@ -158,5 +176,16 @@ const styles = StyleSheet.create({
     buttonSnap:{
         width:70,
         height: 70
+    },
+    modalContainer:{
+        flex: 1,
+        alignItems:'center',
+        justifyContent:'center',
+        backgroundColor: '#000000'
+    },
+    modalImage:{
+        width:'95%',
+        height:'95%',
+        margin:10
     }
 });
