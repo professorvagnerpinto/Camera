@@ -6,11 +6,11 @@
  * by: Vagner Pinto
  */
 
-import React, {Component} from 'react';
+import React from 'react';
 import {StyleSheet, View, Alert} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 
-export default class Barcode extends Component {
+export default class Barcode extends React.Component {
 
     constructor(props) {
         super(props);
@@ -55,6 +55,13 @@ export default class Barcode extends Component {
                         this.camera = ref
                     }}
                     style={styles.scanner}
+                    type={RNCamera.Constants.Type.back}
+                    androidCameraPermissionOptions={{
+                        title: 'Permissão para o uso da Câmera',
+                        message: 'Nós precisamos de sua permissão para utilizar a sua câmera',
+                        buttonPositive: 'Ok',
+                        buttonNegative: 'Cancelar',
+                    }}
                     onGoogleVisionBarcodesDetected={this.barcodeRecognized}>
                     {this.renderBarcodes}
                 </RNCamera>

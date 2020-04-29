@@ -6,12 +6,32 @@
  * by: Vagner Pinto
  */
 
-import React, { PureComponent } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 
-export default class TakePicture extends PureComponent {
+export default class TakePicture extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            uriImage:''
+        }
+        this.takePicture = this.takePicture.bind(this);
+    }
+
+    takePicture = async () => {
+        if (this.camera) { //se a câmera está aberta
+            const options = { quality: 0.5, base64: true };
+            const data = await this.camera.takePictureAsync(options);
+            console.log(data.uri);
+            let s = this.state;
+            s.uriImage = data.uri;
+            this.setState(s);
+        }
+    };
+
     render() {
+        console.log('Uri= ' + this.state.uriImage);
         return (
             <View style={styles.container}>
                 <RNCamera
@@ -38,42 +58,60 @@ export default class TakePicture extends PureComponent {
                         alert(barcodes[0].data);
                     }}
                 />
-                <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
-                        <Text style={{ fontSize: 14 }}> SNAP </Text>
+                <View style={styles.footerDiv}>
+                    <TouchableOpacity onPress={this.takePicture} style={styles.buttonCapture}>
+                        <Text style={styles.textSnap}> SNAP </Text>
                     </TouchableOpacity>
+                    {this.state.uriImage !== '' && <TouchableOpacity style={styles.viewDiv} onPress={()=>this.setState({uriImage:''})}>
+                        <Image resizeMode="contain" style={styles.image} source={{uri:this.state.uriImage}} />
+                    </TouchableOpacity>}
                 </View>
             </View>
         );
     }
-
-    takePicture = async () => {
-        if (this.camera) {
-            const options = { quality: 0.5, base64: true };
-            const data = await this.camera.takePictureAsync(options);
-            console.log(data.uri);
-        }
-    };
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: 'column',
-        backgroundColor: 'black',
+        flexDirection: 'row',
+        backgroundColor: '#000000'
     },
     preview: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
+        flex: 1
     },
-    capture: {
+    footerDiv:{
         flex: 0,
-        backgroundColor: '#fff',
+        width: '100%',
+        justifyContent: 'space-between',
+        alignSelf: 'flex-end',
+        position:'absolute'
+    },
+    buttonCapture:{
+        backgroundColor: '#a50000',
         borderRadius: 5,
         padding: 15,
         paddingHorizontal: 20,
         alignSelf: 'center',
         margin: 20,
+    },
+    textSnap:{
+        fontSize:14,
+        color:'#ffffff',
+        fontWeight:'bold'
+    },
+    viewDiv:{
+        flex:0,
+        marginRight:5,
+        marginBottom:5,
+        justifyContent: 'center',
+        alignSelf: 'flex-end',
+        position:'absolute'
+    },
+    image:{
+        width:100,
+        height:100,
+        borderWidth:1,
+        borderColor:'#ffffff'
     },
 });

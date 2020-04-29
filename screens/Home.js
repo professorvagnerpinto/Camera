@@ -6,7 +6,7 @@
  * by: Vagner Pinto
  */
 
-import React, {Component} from 'react';
+import React from 'react';
 import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 
 export default class Home extends React.Component{
